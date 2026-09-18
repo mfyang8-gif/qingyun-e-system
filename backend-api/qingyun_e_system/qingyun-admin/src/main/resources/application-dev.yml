@@ -1,0 +1,209 @@
+# ==========================================
+#  青云 e 系统 - 开发环境配置
+# ==========================================
+
+spring:
+
+  # ==================== 数据源 (MySQL 8) ====================
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.88.130:3306/qingyun_e_system?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    hikari:
+      connection-timeout: 10000
+      maximum-pool-size: 5
+
+  # ==================== Redis ====================
+  data:
+    redis:
+      host: 192.168.88.130
+      port: 6379
+      password:
+      database: 0
+      timeout: 10000ms
+
+    # ==================== Qdrant 向量数据库 ====================
+    qdrant:
+      host: 192.168.88.130
+      port: 6334
+      http-port: 6333
+      use-tls: false
+      collections:
+        - name: qingyun_knowledge
+          dimension: 1024
+          indexes:
+            - name: userId
+              type: keyword
+            - name: category
+              type: keyword
+            - name: createdAt
+              type: integer
+
+  # ==================== RabbitMQ ====================
+  rabbitmq:
+    host: 192.168.88.130
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      simple:
+        prefetch: 10
+        acknowledge-mode: manual
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 3000ms
+
+  # ==================== Flyway 数据库版本控制 ====================
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+    clean-disabled: true
+    table: flyway_schema_history
+    encoding: UTF-8
+
+  # ==================== Web 资源 ====================
+  web:
+    resources:
+      add-mappings: true
+
+  # ==================== 文件上传限制 ====================
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+
+  # ==================== Jackson 序列化 ====================
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+# ==================== JWT 配置 ====================
+mfyang:
+  jwt:
+    admin-secret-key: this-is-a-secure-admin-secret-key-at-least-32-chars
+    admin-ttl: 7200000
+    admin-token-name: token
+    user-secret-key: this-is-a-secure-user-secret-key-at-least-32-chars
+    user-ttl: 7200000
+    user-token-name: authorization
+
+# ==================== LangChain4j ====================
+langchain4j:
+  open-ai:
+    streaming-chat-model:
+      api-key: 2f2c5560-2549-47ce-8a73-5b39e6b7a455
+      model-name: doubao-seed-2-0-pro-260215
+      base-url: https://ark.cn-beijing.volces.com/api/v3
+      log-requests: true
+      log-responses: true
+      timeout: 240s
+      streaming: true
+      max-tokens: 8192
+      temperature: 0.7
+    chat-model:
+      api-key: sk-f38e965c0f724bdda338d58711de2770
+      model-name: deepseek-v4-flash
+      base-url: https://api.deepseek.com
+      log-requests: true
+      log-responses: true
+      timeout: 120s
+      streaming: true
+      temperature: 0.7
+    embedding-model:
+      api-key: sk-770db1ffaa7e4fff80ed1f95259b121f
+      model-name: text-embedding-v4
+      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      log-requests: true
+      log-responses: true
+      timeout: 120s
+  community:
+    dashscope:
+      chat-model:
+        api-key: sk-770db1ffaa7e4fff80ed1f95259b121f
+        model-name: qwen-turbo
+
+# ==================== PageHelper 分页 ====================
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+# ==================== MyBatis-Plus ====================
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: com.yangmf.qingyun.entity
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+    banner: false
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# ==================== MCP ====================
+mcp:
+  server:
+    search:
+      base-url: https://dashscope.aliyuncs.com/api/v1/mcps/WebSearch/mcp
+  aliyun:
+    api-key: sk-770db1ffaa7e4fff80ed1f95259b121f
+
+# ==================== 云存储 ====================
+storage:
+  provider: aliyun
+  aliyun:
+    endpoint: oss-cn-hangzhou.aliyuncs.com
+    access-key-id: ${OSS_ACCESS_KEY:}
+    access-key-secret: ${OSS_ACCESS_SECRET:}
+    bucket-name: ${OSS_BUCKET:}
+  tencent:
+    region: ap-guangzhou
+    secret-id: ${COS_SECRET_ID:}
+    secret-key: ${COS_SECRET_KEY:}
+    bucket-name: ${COS_BUCKET:}
+
+# ==================== 线程池 ====================
+thread-pool:
+  core-pool-size: 5
+  max-pool-size: 20
+  queue-capacity: 200
+  keep-alive-seconds: 60
+  thread-name-prefix: qingyun-async-
+
+# ==================== Knife4j / SpringDoc ====================
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+    swagger-model-name: 青云 e 接口文档
+
+# ==================== 日志 ====================
+logging:
+  level:
+    root: info
+    com.yangmf.qingyun: debug
+    org.springframework.security: warn
+    org.springframework.amqp: info
+    com.baomidou.mybatisplus: debug
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
