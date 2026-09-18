@@ -1,0 +1,20 @@
+# IDE 配置
+.idea/
+.vscode/
+*.swp
+
+# Java 后端
+backend-api/target/
+backend-api/*.log
+backend-api/application-prod.yml  # 忽略生产环境敏感配置
+
+# 前端 (Vue3 & 小程序)
+frontend-web/node_modules/
+frontend-web/dist/
+frontend-mini/node_modules/
+frontend-mini/dist/
+frontend-mini/unpackage/
+
+# NapCat 服务
+napcat-service/node_modules/
+napcat-service/config.json        # 忽略包含 NapCat 主备账号凭证的配置
